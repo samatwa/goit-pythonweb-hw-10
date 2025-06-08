@@ -1,32 +1,26 @@
-FROM python:3.13-slim-bookworm
+# Використовуємо офіційний образ Python
+FROM python:3.12-slim
 
-# Встановлення системних залежностей
-RUN apt-get update && apt-get install -y \
-    gcc \
-    && rm -rf /var/lib/apt/lists/*
-
-# Встановлення Poetry
-RUN pip install poetry
-
-# Налаштування Poetry
-ENV POETRY_NO_INTERACTION=1 \
-    POETRY_VENV_IN_PROJECT=1 \
-    POETRY_CACHE_DIR=/tmp/poetry_cache
-
-# Створення робочої директорії
+# Встановлюємо робочу директорію
 WORKDIR /app
 
-# Копіювання файлів конфігурації Poetry
-COPY pyproject.toml poetry.lock* ./
+# Встановлюємо системні залежності
+RUN apt-get update && apt-get install -y gcc libpq-dev
 
-# Встановлення залежностей
-RUN poetry install --only=main && rm -rf $POETRY_CACHE_DIR
+# Копіюємо файли проекту (залежності)
+COPY pyproject.toml poetry.lock* /app/
 
-# Копіювання коду застосунку
-COPY . .
+# Встановлюємо Poetry та залежності
+RUN pip install --upgrade pip && \
+    pip install poetry && \
+    poetry config virtualenvs.create false && \
+    poetry install --no-root --only main
 
-# Відкриття порту
+# Копіюємо весь проєкт
+COPY . /app
+
+# Вказуємо порт
 EXPOSE 8000
 
-# Запуск застосунку
-CMD ["poetry", "run", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Команда запуску FastAPI
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]

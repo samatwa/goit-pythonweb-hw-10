@@ -4,6 +4,10 @@ from typing import Optional
 
 
 class ContactBase(BaseModel):
+    """
+    Клас для створення контакту
+    """
+
     first_name: str = Field(..., min_length=1, max_length=50)
     last_name: str = Field(..., min_length=1, max_length=50)
     email: EmailStr
@@ -13,10 +17,18 @@ class ContactBase(BaseModel):
 
 
 class ContactCreate(ContactBase):
+    """
+    Клас для створення контакту
+    """
+
     pass
 
 
 class ContactUpdate(BaseModel):
+    """
+    Клас для оновлення контакту
+    """
+
     first_name: Optional[str] = Field(None, min_length=1, max_length=50)
     last_name: Optional[str] = Field(None, min_length=1, max_length=50)
     email: Optional[EmailStr]
@@ -26,6 +38,10 @@ class ContactUpdate(BaseModel):
 
 
 class ContactResponse(ContactBase):
+    """
+    Клас для отримання контакту
+    """
+
     id: int
 
     class Config:
