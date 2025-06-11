@@ -2,7 +2,12 @@ from fastapi import APIRouter, Depends, HTTPException, status, Request, Backgrou
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.schemas.user import UserCreate, Token, UserResponse, RequestEmail, UserUpdate
-from src.services.auth import create_access_token, Hash, get_email_from_token, get_current_user
+from src.services.auth import (
+    create_access_token,
+    Hash,
+    get_email_from_token,
+    get_current_user,
+)
 from src.services.users import UserService
 from src.services.email import send_email
 from src.database.db import get_db
@@ -13,7 +18,9 @@ router = APIRouter(prefix="/auth", tags=["auth"])
 
 
 # Реєстрація користувача
-@router.post("/register", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/register", response_model=UserResponse, status_code=status.HTTP_201_CREATED
+)
 async def register_user(
     user_data: UserCreate,
     background_tasks: BackgroundTasks,
@@ -65,6 +72,7 @@ async def login_user(
     return {"access_token": access_token, "token_type": "bearer"}
 
 
+# Підтвердження електронної пошти
 @router.get("/confirmed_email/{token}")
 async def confirmed_email(token: str, db: AsyncSession = Depends(get_db)):
     email = await get_email_from_token(token)
@@ -80,6 +88,7 @@ async def confirmed_email(token: str, db: AsyncSession = Depends(get_db)):
     return {"message": "Електронну пошту підтверджено"}
 
 
+# Запит на підтвердження електронної пошти
 @router.post("/request_email")
 async def request_email(
     body: RequestEmail,
@@ -99,6 +108,7 @@ async def request_email(
     return {"message": "Перевірте свою електронну пошту для підтвердження"}
 
 
+# Оновлення поточного користувача
 @router.put("/users/me", response_model=UserResponse)
 async def update_current_user(
     body: UserUpdate,

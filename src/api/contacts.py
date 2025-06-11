@@ -15,6 +15,7 @@ def get_contact_repo(db: AsyncSession = Depends(get_db)) -> ContactRepository:
     return ContactRepository(db)
 
 
+# Список контактів користувача
 @router.get("/", response_model=List[ContactResponse])
 async def list_contacts(
     skip: int = 0,
@@ -25,6 +26,7 @@ async def list_contacts(
     return await repo.get_contacts(skip=skip, limit=limit, user=user)
 
 
+# Отримання контакту за ID
 @router.get("/{contact_id}", response_model=ContactResponse)
 async def retrieve_contact(
     contact_id: int,
@@ -37,6 +39,7 @@ async def retrieve_contact(
     return contact
 
 
+# Створення нового контакту
 @router.post("/", response_model=ContactResponse, status_code=status.HTTP_201_CREATED)
 async def create_new_contact(
     contact: ContactCreate,
@@ -46,6 +49,7 @@ async def create_new_contact(
     return await repo.create_contact(contact, user)
 
 
+# Оновлення існуючого контакту
 @router.put("/{contact_id}", response_model=ContactResponse)
 async def update_existing_contact(
     contact_id: int,
@@ -59,6 +63,7 @@ async def update_existing_contact(
     return updated
 
 
+# Видалення існуючого контакту
 @router.delete("/{contact_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_existing_contact(
     contact_id: int,
@@ -71,6 +76,7 @@ async def delete_existing_contact(
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
+# Пошук контактів за запитом
 @router.get("/search", response_model=List[ContactResponse])
 async def search_contacts(
     query: str,
@@ -80,6 +86,7 @@ async def search_contacts(
     return await repo.search_contacts(query=query, user=user)
 
 
+# Отримання контактів з майбутніми днями народженнями
 @router.get("/upcoming-birthdays", response_model=List[ContactResponse])
 async def get_upcoming_birthdays(
     user: User = Depends(get_current_user),

@@ -5,7 +5,7 @@ from src.database.db import get_db
 
 router = APIRouter(tags=["utils"])
 
-
+# Перевірка стану API
 @router.get(
     "/healthchecker",
     summary="Перевірка стану API",

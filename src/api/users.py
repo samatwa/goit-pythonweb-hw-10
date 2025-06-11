@@ -16,14 +16,18 @@ router = APIRouter(prefix="/users", tags=["users"])
 limiter = Limiter(key_func=get_remote_address)
 
 
+# Отримання інформації про поточного користувача
 @router.get(
-    "/me", response_model=UserResponse, description="No more than 10 requests per minute"
+    "/me",
+    response_model=UserResponse,
+    description="No more than 10 requests per minute",
 )
 @limiter.limit("10/minute")
 async def me(request: Request, user: UserResponse = Depends(get_current_user)):
     return user
 
 
+# Оновлення інформації про користувача
 @router.patch("/avatar", response_model=UserResponse)
 async def update_avatar_user(
     file: UploadFile = File(),

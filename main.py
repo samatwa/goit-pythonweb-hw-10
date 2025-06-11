@@ -38,6 +38,7 @@ app.add_exception_handler(
     ),
 )
 
+# SlowAPI middleware
 app.add_middleware(SlowAPIMiddleware)
 
 # Routers
